@@ -1,0 +1,20 @@
+# vi
+*.swp
+
+# MacOS Finder
+.DS_Store
+._*
+
+# IDE
+*.idea
+.vscode/
+
+# Build
+packages/build/
+
+# Compiled Object files
+*.pyc
+
+# Test
+.pytest_cache
+

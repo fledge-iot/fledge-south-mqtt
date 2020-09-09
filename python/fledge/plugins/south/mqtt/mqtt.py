@@ -68,7 +68,7 @@ __copyright__ = "Copyright (c) 2020 Dianomic Systems, Inc."
 __license__ = "Apache 2.0"
 __version__ = "${VERSION}"
 
-_LOGGER = logger.setup(__name__, level=logging.DEBUG)
+_LOGGER = logger.setup(__name__, level=logging.INFO)
 
 c_callback = None
 c_ingest_ref = None

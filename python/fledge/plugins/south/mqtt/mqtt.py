@@ -4,7 +4,50 @@
 # See: http://fledge.readthedocs.io/
 # FLEDGE_END
 
-""" MQTT Subscriber """
+""" MQTT Subscriber 
+
+TODO:
+
+# MQTT v5 support using paho-mqtt v1.5.0 
+    https://github.com/eclipse/paho.mqtt.python/blob/master/ChangeLog.txt
+
+# broker bind_address
+    The IP address of a local network interface to bind this client to, assuming multiple interfaces exist
+
+# Subscriber
+    topics
+        This can either be a string or a list of strings if multiple topics should be subscribed to.
+    msg_count
+        the number of messages to retrieve from the broker. Defaults to 1. If >1, a list of MQTTMessages will be returned.
+    retained
+        set to True to consider retained messages, set to False to ignore messages with the retained flag set.
+    client_id
+        the MQTT client id to use. If “” or None, the Paho library will generate a client id automatically.
+    will
+        a dict containing will parameters for the client:
+        
+        will = {‘topic’: “<topic>”, ‘payload’:”<payload”>, ‘qos’:<qos>, ‘retain’:<retain>}.
+        Topic is required, all other parameters are optional and will default to None, 0 and False respectively.
+
+        Defaults to None, which indicates no will should be used.
+    auth
+        a dict containing authentication parameters for the client:
+        
+        auth = {‘username’:”<username>”, ‘password’:”<password>”}
+
+        Defaults to None, which indicates no authentication is to be used.
+    tls
+        a dict containing TLS configuration parameters for the cient:
+
+        dict = {‘ca_certs’:”<ca_certs>”, ‘certfile’:”<certfile>”, ‘keyfile’:”<keyfile>”, ‘tls_version’:”<tls_version>”, ‘ciphers’:”<ciphers”>}
+
+        ca_certs is required, all other parameters are optional and will default to None if not provided, which results in the client using the default behaviour - see the paho.mqtt.client documentation.
+
+        Defaults to None, which indicates that TLS should not be used.
+
+    protocol
+        choose the version of the MQTT protocol to use. Use either MQTTv31 or MQTTv311. 
+"""
 
 import asyncio
 import copy
@@ -31,10 +74,6 @@ c_callback = None
 c_ingest_ref = None
 loop = None
 
-# broker bind_address
-# client_id
-# subscriber topic or topics?, msg_count, retained, 
-# TODO: will, auth, tls, protocol
 _DEFAULT_CONFIG = {
     'plugin': {
         'description': 'MQTT Subscriber South Plugin',
@@ -58,11 +97,19 @@ _DEFAULT_CONFIG = {
         'displayName': 'MQTT Broker Port',
         'mandatory': 'true'
     },
+    'keepAliveInterval': {
+        'description': 'Maximum period in seconds allowed between communications with the broker. If no other messages are being exchanged, '
+                        'this controls the rate at which the client will send ping messages to the broker.',
+        'type': 'integer',
+        'default': '60',
+        'order': '3',
+        'displayName': 'Keep Alive Interval'
+    },
     'topic': {
-        'description': 'The subscription topic to subscribe to',
+        'description': 'The subscription topic to subscribe to receive messages',
         'type': 'string',
         'default': 'Room1/conditions',
-        'order': '3',
+        'order': '4',
         'displayName': 'Topic To Subscribe',
         'mandatory': 'true'
     },
@@ -70,9 +117,8 @@ _DEFAULT_CONFIG = {
         'description': 'The desired quality of service level for the subscription',
         'type': 'integer',
         'default': '0',
-        'order': '4',
+        'order': '5',
         'displayName': 'QoS Level',
-        'mandatory': 'true',
         'minimum': '0',
         'maximum': '2'
     },
@@ -80,17 +126,9 @@ _DEFAULT_CONFIG = {
         'description': 'Name of Asset',
         'type': 'string',
         'default': 'mqtt-',
-        'order': '5',
+        'order': '6',
         'displayName': 'Asset Name',
         'mandatory': 'true'
-    },
-    'keepAliveInterval': {
-        'description': 'Maximum period in seconds allowed between communications with the broker. If no other messages are being exchanged, '
-                        'this controls the rate at which the client will send ping messages to the broker.',
-        'type': 'integer',
-        'default': '60',
-        'order': '6',
-        'displayName': 'Keep Alive Interval'
     }
 }
 
@@ -126,7 +164,6 @@ def plugin_start(handle):
 
     _LOGGER.info('Starting MQTT south plugin...')
     try:
-        
         _mqtt = handle["_mqtt"]
         _mqtt.loop = loop
         _mqtt.start()

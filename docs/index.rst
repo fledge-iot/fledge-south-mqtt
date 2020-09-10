@@ -42,25 +42,13 @@ To create a south service you, as with any other south plugin
   - Enable your service and click *Done*
 
 
-JSON Payload
-------------
+Published Message Payload
+-------------------------
 
-The content of the *readings* object is a set of JSON properties. The payload (byte-array) of published messages should be a JSON object. 
+The content of the publish message payload should be parsable to a JSON object. 
 
-+-----------+----------------------------------------------------------------+
-| Name      | Description                                                    |
-+===========+================================================================+
-| timestamp | The timestamp will be generated locally by the plugin.         |
-+-----------+----------------------------------------------------------------+
-| asset     | The name of the asset configured.                              |
-+-----------+----------------------------------------------------------------+
-| readings  | A JSON object parsed from received message payload.            |
-+-----------+----------------------------------------------------------------+
-
-
-Example of Published Message Payload
-------------------------------------
+e.g. `'{"humidity": 93.29, "temp": 16.82}'`
 
 .. code-block:: console
 
-    $ mosquitto_pub -h localhost -t "Room1/conditions" -m '{"humidity": 93.29, "temp": 16.82}'
+  $ mosquitto_pub -h localhost -t "Room1/conditions" -m '{"humidity": 93.29, "temp": 16.82}'

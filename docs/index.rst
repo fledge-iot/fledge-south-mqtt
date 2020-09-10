@@ -9,9 +9,9 @@ The *fledge-south-mqtt* plugin allows to create an MQTT subscriber service. MQTT
 
 To create a south service you, as with any other south plugin
 
-  - Select *South* from the left hand menu bar.
+  - Select *South* from the left hand menu bar
 
-  - Click on the + icon in the top left
+  - Click on the + icon in the top right
 
   - Choose mqtt from the plugin selection list
 

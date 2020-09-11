@@ -42,13 +42,17 @@ To create a south service you, as with any other south plugin
   - Enable your service and click *Done*
 
 
-Published Message Payload
--------------------------
+Message Payload
+---------------
 
-The content of the publish message payload should be parsable to a JSON object. 
+The content of the message payload published to the topic, to which the service is configured to subscribe, 
+should be parsable to a JSON object.
 
 e.g. `'{"humidity": 93.29, "temp": 16.82}'`
 
 .. code-block:: console
 
   $ mosquitto_pub -h localhost -t "Room1/conditions" -m '{"humidity": 93.29, "temp": 16.82}'
+
+The mosquitto_pub client utility comes with the mosquitto package, and a great tool for conducting quick tests and troubleshooting.
+https://mosquitto.org/man/mosquitto_pub-1.html

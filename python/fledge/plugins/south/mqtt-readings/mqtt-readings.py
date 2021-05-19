@@ -78,7 +78,7 @@ _DEFAULT_CONFIG = {
     'plugin': {
         'description': 'MQTT Subscriber South Plugin',
         'type': 'string',
-        'default': 'mqtt',
+        'default': 'mqtt-readings',
         'readonly': 'true'
     },
     'brokerHost': {

@@ -3,7 +3,6 @@
 plugin_name=mqtt-readings
 plugin_type=south
 plugin_install_dirname=${plugin_name}
-plugin_package_name=fledge-${plugin_type}-mqtt
 
 # Now build up the runtime requirements list. This has 3 components
 #   1. Generic packages we depend on in all architectures and package managers

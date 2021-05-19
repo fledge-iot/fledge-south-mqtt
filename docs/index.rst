@@ -5,7 +5,7 @@
 South MQTT
 ==========
 
-The *fledge-south-mqtt* plugin allows to create an MQTT subscriber service. MQTT Subscriber reads messages from topics on the MQTT broker.
+The *fledge-south-mqtt-readings* plugin allows to create an MQTT subscriber service. MQTT Subscriber reads messages from topics on the MQTT broker.
 
 To create a south service you, as with any other south plugin
 

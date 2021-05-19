@@ -13,7 +13,7 @@ To create a south service you, as with any other south plugin
 
   - Click on the + icon in the top right
 
-  - Choose mqtt from the plugin selection list
+  - Choose mqtt-readings from the plugin selection list
 
   - Name your service
 

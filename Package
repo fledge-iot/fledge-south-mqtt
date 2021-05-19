@@ -1,6 +1,6 @@
 # A set of variables that define how we package this repository
 #
-plugin_name=mqtt
+plugin_name=mqtt-readings
 plugin_type=south
 plugin_install_dirname=${plugin_name}
 

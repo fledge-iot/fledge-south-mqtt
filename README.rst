@@ -1,6 +1,6 @@
-==================
-fledge-south-mqtt
-==================
+==========================
+fledge-south-mqtt-readings
+==========================
 
 Fledge South MQTT Subscriber Plugin, Default MQTT version is v3.1.1; Use either MQTTv31 or MQTTv311. 
 

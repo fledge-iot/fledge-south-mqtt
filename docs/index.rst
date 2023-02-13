@@ -29,6 +29,10 @@ To create a south service you, as with any other south plugin
 
     - **MQTT Broker Port**: The network port of the broker.
 
+    - **Username**: Username for broker authentication.
+
+    - **Password**: Password for broker authentication.
+
     - **Keep Alive Interval**: Maximum period in seconds allowed between communications with the broker. If no other messages are being exchanged, this controls the rate at which the client will send ping messages to the broker.
 
     - **Topic To Subscribe**: The subscription topic to subscribe to receive messages.

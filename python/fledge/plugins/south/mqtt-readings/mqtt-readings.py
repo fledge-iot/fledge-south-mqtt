@@ -30,12 +30,6 @@ TODO:
         Topic is required, all other parameters are optional and will default to None, 0 and False respectively.
 
         Defaults to None, which indicates no will should be used.
-    auth
-        a dict containing authentication parameters for the client:
-        
-        auth = {‘username’:”<username>”, ‘password’:”<password>”}
-
-        Defaults to None, which indicates no authentication is to be used.
     tls
         a dict containing TLS configuration parameters for the cient:
 
@@ -97,19 +91,33 @@ _DEFAULT_CONFIG = {
         'displayName': 'MQTT Broker Port',
         'mandatory': 'true'
     },
+    'username': {
+        'description': 'Username for broker authentication',
+        'type': 'string',
+        'default': '',
+        'order': '3',
+        'displayName': 'Username'
+    },
+    'password': {
+        'description': 'Password for broker authentication',
+        'type': 'string',
+        'default': '',
+        'order': '4',
+        'displayName': 'Password'
+    },
     'keepAliveInterval': {
         'description': 'Maximum period in seconds allowed between communications with the broker. If no other messages are being exchanged, '
                         'this controls the rate at which the client will send ping messages to the broker.',
         'type': 'integer',
         'default': '60',
-        'order': '3',
+        'order': '5',
         'displayName': 'Keep Alive Interval'
     },
     'topic': {
         'description': 'The subscription topic to subscribe to receive messages',
         'type': 'string',
         'default': 'Room1/conditions',
-        'order': '4',
+        'order': '6',
         'displayName': 'Topic To Subscribe',
         'mandatory': 'true'
     },
@@ -117,7 +125,7 @@ _DEFAULT_CONFIG = {
         'description': 'The desired quality of service level for the subscription',
         'type': 'integer',
         'default': '0',
-        'order': '5',
+        'order': '7',
         'displayName': 'QoS Level',
         'minimum': '0',
         'maximum': '2'
@@ -126,7 +134,7 @@ _DEFAULT_CONFIG = {
         'description': 'Name of Asset',
         'type': 'string',
         'default': 'mqtt-',
-        'order': '6',
+        'order': '8',
         'displayName': 'Asset Name',
         'mandatory': 'true'
     }
@@ -234,12 +242,14 @@ def plugin_register_ingest(handle, callback, ingest_ref):
 class MqttSubscriberClient(object):
     """ mqtt listener class"""
 
-    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'topic', 'qos', 'keep_alive_interval', 'asset', 'loop']
+    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'username', 'password', 'topic', 'qos', 'keep_alive_interval', 'asset', 'loop']
 
     def __init__(self, config):
         self.mqtt_client = mqtt.Client()
         self.broker_host = config['brokerHost']['value']
         self.broker_port = int(config['brokerPort']['value'])
+        self.username = config['username']['value']
+        self.password = config['password']['value']
         self.topic = config['topic']['value']
         self.qos = int(config['qos']['value'])
         self.keep_alive_interval = int(config['keepAliveInterval']['value'])
@@ -271,6 +281,9 @@ class MqttSubscriberClient(object):
         pass
 
     def start(self):
+        if self.username and len(self.username.strip()) and self.password and len(self.password):
+            # no strip on pwd len check, as it can be all spaces?!
+            self.mqtt_client.username_pw_set(self.username, password=self.password)
         # event callbacks
         self.mqtt_client.on_connect = self.on_connect
 

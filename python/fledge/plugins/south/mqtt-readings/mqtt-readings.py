@@ -305,7 +305,7 @@ class MqttSubscriberClient(object):
         constructors = [json.loads, int, float, str]
         for constructor in constructors:
             try:
-                return constructor(msg)
+                return constructor(msg) if constructor != json.loads else {"value": constructor(msg)}
             except ValueError:
                 pass
 

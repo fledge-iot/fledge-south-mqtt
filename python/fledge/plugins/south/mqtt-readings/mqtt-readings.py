@@ -310,6 +310,7 @@ class MqttSubscriberClient(object):
                 pass
 
         _LOGGER.error("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
+        raise Exception("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
 
     async def save(self, msg):
         """Store msg content to Fledge """

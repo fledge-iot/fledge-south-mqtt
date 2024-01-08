@@ -321,7 +321,6 @@ class MqttSubscriberClient(object):
 
     async def save(self, msg):
         """Store msg content to Fledge """
-        # TODO: string and other types?
         payload_json = self.convert(msg.payload.decode('utf-8'))
         _LOGGER.debug("Ingesting %s on topic %s", payload_json, str(msg.topic)) 
         data = {

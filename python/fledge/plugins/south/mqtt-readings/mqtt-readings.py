@@ -130,11 +130,18 @@ _DEFAULT_CONFIG = {
         'minimum': '0',
         'maximum': '2'
     },
+    'json_object_key': {
+        'description': 'If only a value is sent this needs to be converted to an json object, the value given here will he the key for the value in that json object',
+        'type': 'string',
+        'default': 'value',
+        'order': '8',
+        'displayName': 'Json Object Key',
+    },
     'assetName': {
         'description': 'Name of Asset',
         'type': 'string',
         'default': 'mqtt-',
-        'order': '8',
+        'order': '9',
         'displayName': 'Asset Name',
         'mandatory': 'true'
     }
@@ -253,6 +260,7 @@ class MqttSubscriberClient(object):
         self.topic = config['topic']['value']
         self.qos = int(config['qos']['value'])
         self.keep_alive_interval = int(config['keepAliveInterval']['value'])
+        self.json_object_key = config['json_object_key']['value']
         self.asset = config['assetName']['value']
 
     def on_connect(self, client, userdata, flags, rc):
@@ -305,12 +313,11 @@ class MqttSubscriberClient(object):
         constructors = [json.loads, int, float, str]
         for constructor in constructors:
             try:
-                return constructor(msg) if constructor != json.loads else {"value": constructor(msg)}
+                return constructor(msg) if constructor != json.loads else {self.json_object_key: constructor(msg)}
             except ValueError:
                 pass
 
-        _LOGGER.error("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
-        raise Exception("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
+        _LOGGER.exception("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
 
     async def save(self, msg):
         """Store msg content to Fledge """

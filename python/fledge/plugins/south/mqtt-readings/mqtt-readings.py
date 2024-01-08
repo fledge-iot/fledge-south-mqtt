@@ -301,10 +301,20 @@ class MqttSubscriberClient(object):
         self.mqtt_client.disconnect()
         self.mqtt_client.loop_stop()
 
+    def convert(self, msg):
+        constructors = [json.loads, int, float, str]
+        for constructor in constructors:
+            try:
+                return constructor(msg)
+            except ValueError:
+                pass
+
+        _LOGGER.error("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
+
     async def save(self, msg):
         """Store msg content to Fledge """
         # TODO: string and other types?
-        payload_json = json.loads(msg.payload.decode('utf-8'))
+        payload_json = self.convert(msg.payload.decode('utf-8'))
         _LOGGER.debug("Ingesting %s on topic %s", payload_json, str(msg.topic)) 
         data = {
             'asset': self.asset,

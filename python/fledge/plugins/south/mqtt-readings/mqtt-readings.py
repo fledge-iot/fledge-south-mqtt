@@ -100,7 +100,7 @@ _DEFAULT_CONFIG = {
     },
     'password': {
         'description': 'Password for broker authentication',
-        'type': 'string',
+        'type': 'password',
         'default': '',
         'order': '4',
         'displayName': 'Password'

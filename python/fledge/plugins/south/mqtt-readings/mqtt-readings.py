@@ -249,7 +249,7 @@ def plugin_register_ingest(handle, callback, ingest_ref):
 class MqttSubscriberClient(object):
     """ mqtt listener class"""
 
-    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'username', 'password', 'topic', 'qos', 'keep_alive_interval', 'asset', 'loop']
+    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'username', 'password', 'topic', 'qos', 'keep_alive_interval', 'json_object_key', 'asset', 'loop']
 
     def __init__(self, config):
         self.mqtt_client = mqtt.Client()

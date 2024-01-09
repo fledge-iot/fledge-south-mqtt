@@ -314,9 +314,14 @@ class MqttSubscriberClient(object):
         for constructor in constructors:
             try:
                 converted_msg = constructor(msg)
-                if str(converted_msg) == str(msg):
-                    return converted_msg if type(converted_msg) == dict else {self.json_object_key: converted_msg}
-            except (ValueError, TypeError):
+                # If we are not using the json constructor, create and return dictionary
+                if constructor != json.loads:
+                    # Stop int constructor from casting floats to int
+                    if str(converted_msg) == str(msg):
+                        return {self.json_object_key: converted_msg}
+                else:
+                    return converted_msg
+            except (ValueError, TypeError) as error:
                 pass
         _LOGGER.exception("Unable to convert %s to a suitable type", payload_json, str(msg.topic)) 
         

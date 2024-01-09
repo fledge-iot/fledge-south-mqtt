@@ -309,7 +309,7 @@ class MqttSubscriberClient(object):
         self.mqtt_client.disconnect()
         self.mqtt_client.loop_stop()
 
-    def convert(msg):
+    def convert(self, msg):
         constructors = [json.loads, int, float, str]
         for constructor in constructors:
             try:

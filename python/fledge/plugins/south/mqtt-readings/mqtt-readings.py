@@ -56,7 +56,7 @@ from fledge.services.south import exceptions
 from fledge.services.south.ingest import Ingest
 import async_ingest
 
-__author__ = "Praveen Garg, Osker Gert"
+__author__ = "Praveen Garg, Oskar Gert"
 __copyright__ = "Copyright (c) 2024 Dianomic Systems, Inc."
 __license__ = "Apache 2.0"
 __version__ = "${VERSION}"
@@ -152,7 +152,7 @@ _DEFAULT_CONFIG = {
 def plugin_info():
     return {
         'name': 'MQTT Subscriber',
-        'version': '2.2.0',
+        'version': '2.3.0',
         'mode': 'async',
         'type': 'south',
         'interface': '1.0',
@@ -324,7 +324,7 @@ class MqttSubscriberClient(object):
                 pass
             else:
                return converted_msg
-        _LOGGER.exception("Unable to convert the published data to a suitable type on the topic %s", str(msg.topic)) 
+        _LOGGER.exception("Unable to convert payload '%s' to a suitable type", str(msg)) 
         
     async def save(self, msg):
         """Store msg content to Fledge """

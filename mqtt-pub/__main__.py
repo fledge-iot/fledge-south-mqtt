@@ -34,6 +34,10 @@ def on_disconnect(client, userdata, rc):
 
 # faking
 def prepare_data():
+    # return "100"
+    # return "90.9"
+    # return "STRING"
+    # return '{"abc": 1}'
     h = float("{0:.2f}".format(random.uniform(50, 100)))
     t = float("{0:.2f}".format(random.uniform(10, 40)))
     data = dict()

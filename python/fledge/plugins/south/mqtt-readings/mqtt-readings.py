@@ -47,7 +47,6 @@ import asyncio
 import copy
 import json
 import logging
-import uuid
 
 import paho.mqtt.client as mqtt
 
@@ -57,12 +56,12 @@ from fledge.services.south import exceptions
 from fledge.services.south.ingest import Ingest
 import async_ingest
 
-__author__ = "Praveen Garg"
-__copyright__ = "Copyright (c) 2020 Dianomic Systems, Inc."
+__author__ = "Praveen Garg, Oskar Gert"
+__copyright__ = "Copyright (c) 2024 Dianomic Systems, Inc."
 __license__ = "Apache 2.0"
 __version__ = "${VERSION}"
 
-_LOGGER = logger.setup(__name__, level=logging.INFO)
+_LOGGER = logger.setup(__name__, level=logging.WARNING)
 
 c_callback = None
 c_ingest_ref = None
@@ -100,7 +99,7 @@ _DEFAULT_CONFIG = {
     },
     'password': {
         'description': 'Password for broker authentication',
-        'type': 'string',
+        'type': 'password',
         'default': '',
         'order': '4',
         'displayName': 'Password'
@@ -136,7 +135,16 @@ _DEFAULT_CONFIG = {
         'default': 'mqtt-',
         'order': '8',
         'displayName': 'Asset Name',
-        'mandatory': 'true'
+        'mandatory': 'true',
+        'group': 'Reading'
+    },
+    'reading_datapoint_name_for_primitive_value': {
+        'description': 'Datapoint name to be used in the reading object only for a primitive value, published to the topic',
+        'type': 'string',
+        'default': 'datapoint',
+        'order': '9',
+        'displayName': 'Datapoint Name',
+        'group': 'Reading'
     }
 }
 
@@ -242,7 +250,7 @@ def plugin_register_ingest(handle, callback, ingest_ref):
 class MqttSubscriberClient(object):
     """ mqtt listener class"""
 
-    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'username', 'password', 'topic', 'qos', 'keep_alive_interval', 'asset', 'loop']
+    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'username', 'password', 'topic', 'qos', 'keep_alive_interval', 'asset', 'reading_datapoint_name_for_primitive_value', 'loop']
 
     def __init__(self, config):
         self.mqtt_client = mqtt.Client()
@@ -253,7 +261,9 @@ class MqttSubscriberClient(object):
         self.topic = config['topic']['value']
         self.qos = int(config['qos']['value'])
         self.keep_alive_interval = int(config['keepAliveInterval']['value'])
+        
         self.asset = config['assetName']['value']
+        self.reading_datapoint_name_for_primitive_value = config['reading_datapoint_name_for_primitive_value']['value']
 
     def on_connect(self, client, userdata, flags, rc):
         """ The callback for when the client receives a CONNACK response from the server
@@ -301,10 +311,24 @@ class MqttSubscriberClient(object):
         self.mqtt_client.disconnect()
         self.mqtt_client.loop_stop()
 
+    def convert(self, msg):
+        constructors = [json.loads, int, float, str]
+        for constructor in constructors:
+            try:
+                # Only convert if type is string
+                converted_msg = constructor(msg) if type(msg) == str else msg
+                # Create dict if converted msg isn't already a dict
+                if not isinstance(converted_msg, dict):
+                    converted_msg = {self.reading_datapoint_name_for_primitive_value: converted_msg}
+            except (ValueError, TypeError) as error:
+                pass
+            else:
+               return converted_msg
+        _LOGGER.exception("Unable to convert payload '%s' to a suitable type", str(msg)) 
+        
     async def save(self, msg):
         """Store msg content to Fledge """
-        # TODO: string and other types?
-        payload_json = json.loads(msg.payload.decode('utf-8'))
+        payload_json = self.convert(msg.payload.decode('utf-8'))
         _LOGGER.debug("Ingesting %s on topic %s", payload_json, str(msg.topic)) 
         data = {
             'asset': self.asset,

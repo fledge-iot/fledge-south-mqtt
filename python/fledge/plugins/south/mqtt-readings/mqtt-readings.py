@@ -68,95 +68,94 @@ c_ingest_ref = None
 loop = None
 
 _DEFAULT_CONFIG = {
-    'plugin': {
-        'description': 'MQTT Subscriber South Plugin',
-        'type': 'string',
-        'default': 'mqtt-readings',
-        'readonly': 'true'
+    "plugin": {
+        "description": "MQTT Subscriber South Plugin",
+        "type": "string",
+        "default": "mqtt-readings",
+        "readonly": "true",
     },
-    'brokerHost': {
-        'description': 'Hostname or IP address of the broker to connect to',
-        'type': 'string',
-        'default': 'localhost',
-        'order': '1',
-        'displayName': 'MQTT Broker host',
-        'mandatory': 'true'
+    "brokerHost": {
+        "description": "Hostname or IP address of the broker to connect to",
+        "type": "string",
+        "default": "localhost",
+        "order": "1",
+        "displayName": "MQTT Broker host",
+        "mandatory": "true",
     },
-    'brokerPort': {
-        'description': 'The network port of the broker to connect to',
-        'type': 'integer',
-        'default': '1883',
-        'order': '2',
-        'displayName': 'MQTT Broker Port',
-        'mandatory': 'true'
+    "brokerPort": {
+        "description": "The network port of the broker to connect to",
+        "type": "integer",
+        "default": "1883",
+        "order": "2",
+        "displayName": "MQTT Broker Port",
+        "mandatory": "true",
     },
-    'username': {
-        'description': 'Username for broker authentication',
-        'type': 'string',
-        'default': '',
-        'order': '3',
-        'displayName': 'Username'
+    "username": {
+        "description": "Username for broker authentication",
+        "type": "string",
+        "default": "",
+        "order": "3",
+        "displayName": "Username",
     },
-    'password': {
-        'description': 'Password for broker authentication',
-        'type': 'password',
-        'default': '',
-        'order': '4',
-        'displayName': 'Password'
+    "password": {
+        "description": "Password for broker authentication",
+        "type": "password",
+        "default": "",
+        "order": "4",
+        "displayName": "Password",
     },
-    'keepAliveInterval': {
-        'description': 'Maximum period in seconds allowed between communications with the broker. If no other messages are being exchanged, '
-                        'this controls the rate at which the client will send ping messages to the broker.',
-        'type': 'integer',
-        'default': '60',
-        'order': '5',
-        'displayName': 'Keep Alive Interval'
+    "keepAliveInterval": {
+        "description": "Maximum period in seconds allowed between communications with the broker. If no other messages are being exchanged, "
+        "this controls the rate at which the client will send ping messages to the broker.",
+        "type": "integer",
+        "default": "60",
+        "order": "5",
+        "displayName": "Keep Alive Interval",
     },
-    'topic': {
-        'description': 'The subscription topic to subscribe to receive messages',
-        'type': 'string',
-        'default': 'Room1/conditions',
-        'order': '6',
-        'displayName': 'Topic To Subscribe',
-        'mandatory': 'true'
+    "subscriptions": {
+        "description": "Variables to observe changes in",
+        "type": "JSON",
+        "default": '{ "subscriptions" : [  "MyCompany/Site/Line" ] }',
+        "displayName": "OPCUA Object Subscriptions",
+        "order": "6",
     },
-    'qos': {
-        'description': 'The desired quality of service level for the subscription',
-        'type': 'integer',
-        'default': '0',
-        'order': '7',
-        'displayName': 'QoS Level',
-        'minimum': '0',
-        'maximum': '2'
+    "qos": {
+        "description": "The desired quality of service level for the subscription",
+        "type": "integer",
+        "default": "0",
+        "order": "7",
+        "displayName": "QoS Level",
+        "minimum": "0",
+        "maximum": "2",
     },
-    'assetName': {
-        'description': 'Name of Asset',
-        'type': 'string',
-        'default': 'mqtt-',
-        'order': '8',
-        'displayName': 'Asset Name',
-        'mandatory': 'true',
-        'group': 'Reading'
+    "assetName": {
+        "description": "Name of Asset",
+        "type": "string",
+        "default": "mqtt-",
+        "order": "8",
+        "displayName": "Asset Name",
+        "mandatory": "true",
+        "group": "Reading",
     },
-    'reading_datapoint_name_for_primitive_value': {
-        'description': 'Datapoint name to be used in the reading object only for a primitive value, published to the topic',
-        'type': 'string',
-        'default': 'datapoint',
-        'order': '9',
-        'displayName': 'Datapoint Name',
-        'group': 'Reading'
-    }
+    "reading_datapoint_name_for_primitive_value": {
+        "description": "Datapoint name to be used in the reading object only for a primitive value, published to the topic",
+        "type": "string",
+        "default": "datapoint",
+        "order": "9",
+        "displayName": "Datapoint Name",
+        "group": "Reading",
+    },
 }
 
 
 def plugin_info():
     return {
-        'name': 'MQTT Subscriber',
-        'version': '2.5.0',
-        'mode': 'async',
-        'type': 'south',
-        'interface': '1.0',
-        'config': _DEFAULT_CONFIG
+        "name": "MQTT Subscriber",
+        "version": "2.5.0",
+        "mode": "async",
+        "type": "south",
+        "interface": "1.0",
+        "config": _DEFAULT_CONFIG,
     }
 
 
@@ -178,7 +177,7 @@ def plugin_start(handle):
     global loop
     loop = asyncio.new_event_loop()
 
-    _LOGGER.info('Starting MQTT south plugin...')
+    _LOGGER.info("Starting MQTT south plugin...")
     try:
         _mqtt = handle["_mqtt"]
         _mqtt.loop = loop
@@ -186,10 +185,11 @@ def plugin_start(handle):
     except Exception as e:
         _LOGGER.exception(str(e))
     else:
-        _LOGGER.info('MQTT south plugin started.')
+        _LOGGER.info("MQTT south plugin started.")
+
 
 def plugin_reconfigure(handle, new_config):
-    """ Reconfigures the plugin
+    """Reconfigures the plugin
 
     it should be called when the configuration of the plugin is changed during the operation of the South service;
     The new configuration category should be passed.
@@ -201,18 +201,18 @@ def plugin_reconfigure(handle, new_config):
         new_handle: new handle to be used in the future calls
     Raises:
     """
-    _LOGGER.info('Reconfiguring MQTT south plugin...')
+    _LOGGER.info("Reconfiguring MQTT south plugin...")
     plugin_shutdown(handle)
 
     new_handle = plugin_init(new_config)
     plugin_start(new_handle)
 
-    _LOGGER.info('MQTT south plugin reconfigured.')
+    _LOGGER.info("MQTT south plugin reconfigured.")
     return new_handle
 
 
 def plugin_shutdown(handle):
-    """ Shut down the plugin
+    """Shut down the plugin
 
     To be called prior to the South service being shut down.
 
@@ -223,20 +223,20 @@ def plugin_shutdown(handle):
     """
     global loop
     try:
-        _LOGGER.info('Shutting down MQTT south plugin...')
+        _LOGGER.info("Shutting down MQTT south plugin...")
         _mqtt = handle["_mqtt"]
         _mqtt.stop()
-        
+
         loop.stop()
         loop = None
     except Exception as e:
         _LOGGER.exception(str(e))
     else:
-        _LOGGER.info('MQTT south plugin shut down.')
+        _LOGGER.info("MQTT south plugin shut down.")
 
 
 def plugin_register_ingest(handle, callback, ingest_ref):
-    """ Required plugin interface component to communicate to South C server
+    """Required plugin interface component to communicate to South C server
     Args:
         handle: handle returned by the plugin initialisation call
         callback: C opaque object required to passed back to C->ingest method
@@ -248,50 +248,76 @@ def plugin_register_ingest(handle, callback, ingest_ref):
 
 
 class MqttSubscriberClient(object):
-    """ mqtt listener class"""
+    """mqtt listener class"""
 
-    __slots__ = ['mqtt_client', 'broker_host', 'broker_port', 'username', 'password', 'topic', 'qos', 'keep_alive_interval', 'asset', 'reading_datapoint_name_for_primitive_value', 'loop']
+    __slots__ = [
+        "mqtt_client",
+        "broker_host",
+        "broker_port",
+        "username",
+        "password",
+        "subscriptions",
+        "qos",
+        "keep_alive_interval",
+        "asset",
+        "reading_datapoint_name_for_primitive_value",
+        "loop",
+    ]
 
     def __init__(self, config):
-        self.mqtt_client = mqtt.Client()
-        self.broker_host = config['brokerHost']['value']
-        self.broker_port = int(config['brokerPort']['value'])
-        self.username = config['username']['value']
-        self.password = config['password']['value']
-        self.topic = config['topic']['value']
-        self.qos = int(config['qos']['value'])
-        self.keep_alive_interval = int(config['keepAliveInterval']['value'])
+        self.mqtt_client = mqtt.Client(
+            callback_api_version=mqtt.CallbackAPIVersion.VERSION2
+        )
+        self.broker_host = config["brokerHost"]["value"]
+        self.broker_port = int(config["brokerPort"]["value"])
+        self.username = config["username"]["value"]
+        self.password = config["password"]["value"]
+        self.subscriptions = config["subscriptions"]["value"].get("subscriptions", [])
+        self.qos = int(config["qos"]["value"])
+        self.keep_alive_interval = int(config["keepAliveInterval"]["value"])
+
+        self.asset = config["assetName"]["value"]
+        self.reading_datapoint_name_for_primitive_value = config[
+            "reading_datapoint_name_for_primitive_value"
+        ]["value"]
+
+    def on_connect(self, mqttc, obj, flags, reason_code, properties):
+        """The callback for when the client receives a CONNACK response from the server"""
+        mqttc.connected_flag = True
+        if len(self.subscriptions) == 0:
+            _LOGGER.warn("No subscriptions provided!")
         
-        self.asset = config['assetName']['value']
-        self.reading_datapoint_name_for_primitive_value = config['reading_datapoint_name_for_primitive_value']['value']
+        # subscribe at given topics
+        for topic in self.subscriptions:
+            mqttc.subscribe(topic, self.qos)
+        _LOGGER.info("MQTT connected. Subscribed the topics: %s", self.subscriptions)
 
-    def on_connect(self, client, userdata, flags, rc):
-        """ The callback for when the client receives a CONNACK response from the server
-        """
-        client.connected_flag = True
-        # subscribe at given Topic on connect
-        client.subscribe(self.topic, self.qos)
-        _LOGGER.info("MQTT connected. Subscribed the topic: %s", self.topic)
-
-    def on_disconnect(self, client, userdata, rc):
+    def on_disconnect(
+        self, client, userdata, disconnect_flags, reason_code, properties
+    ):
         pass
 
-    def on_message(self, client, userdata, msg):
-        """ The callback for when a PUBLISH message is received from the server
-        """
-        _LOGGER.info("MQTT Received message; Topic: %s, Payload: %s  with QoS: %s", str(msg.topic), str(msg.payload),
-                     str(msg.qos))
+    def on_message(self, mqttc, obj, msg):
+        """The callback for when a PUBLISH message is received from the server"""
+        _LOGGER.info(
+            "MQTT Received message; Topic: %s, Payload: %s  with QoS: %s",
+            str(msg.topic),
+            str(msg.payload),
+            str(msg.qos),
+        )
 
         self.loop.run_until_complete(self.save(msg))
 
-    def on_subscribe(self, client, userdata, mid, granted_qos):
-        pass
-
-    def on_unsubscribe(self, client, userdata, mid):
+    def on_subscribe(self, mqttc, obj, mid, reason_code_list, properties):
         pass
 
     def start(self):
-        if self.username and len(self.username.strip()) and self.password and len(self.password):
+        if (
+            self.username
+            and len(self.username.strip())
+            and self.password
+            and len(self.password)
+        ):
             # no strip on pwd len check, as it can be all spaces?!
             self.mqtt_client.username_pw_set(self.username, password=self.password)
         # event callbacks
@@ -302,8 +328,14 @@ class MqttSubscriberClient(object):
 
         self.mqtt_client.on_disconnect = self.on_disconnect
 
-        self.mqtt_client.connect(self.broker_host, self.broker_port, self.keep_alive_interval)
-        _LOGGER.info("MQTT connecting..., Broker Host: %s, Port: %s", self.broker_host, self.broker_port)
+        self.mqtt_client.connect(
+            self.broker_host, self.broker_port, self.keep_alive_interval
+        )
+        _LOGGER.info(
+            "MQTT connecting..., Broker Host: %s, Port: %s",
+            self.broker_host,
+            self.broker_port,
+        )
 
         self.mqtt_client.loop_start()
 
@@ -319,20 +351,22 @@ class MqttSubscriberClient(object):
                 converted_msg = constructor(msg) if type(msg) == str else msg
                 # Create dict if converted msg isn't already a dict
                 if not isinstance(converted_msg, dict):
-                    converted_msg = {self.reading_datapoint_name_for_primitive_value: converted_msg}
+                    converted_msg = {
+                        self.reading_datapoint_name_for_primitive_value: converted_msg
+                    }
             except (ValueError, TypeError) as error:
                 pass
             else:
-               return converted_msg
-        _LOGGER.exception("Unable to convert payload '%s' to a suitable type", str(msg)) 
-        
+                return converted_msg
+        _LOGGER.exception("Unable to convert payload '%s' to a suitable type", str(msg))
+
     async def save(self, msg):
-        """Store msg content to Fledge """
-        payload_json = self.convert(msg.payload.decode('utf-8'))
-        _LOGGER.debug("Ingesting %s on topic %s", payload_json, str(msg.topic)) 
+        """Store msg content to Fledge"""
+        payload_json = self.convert(msg.payload.decode("utf-8"))
+        _LOGGER.debug("Ingesting %s on topic %s", payload_json, str(msg.topic))
         data = {
-            'asset': self.asset,
-            'timestamp': utils.local_timestamp(),
-            'readings': payload_json
+            "asset": msg.topic,  # custom asset per topic
+            "timestamp": utils.local_timestamp(),
+            "readings": payload_json,
         }
         async_ingest.ingest_callback(c_callback, c_ingest_ref, data)

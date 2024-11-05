@@ -17,19 +17,11 @@ MQTT_PORT = 1883
 KEEP_ALIVE_INTERVAL = 45
 
 
-def on_connect(client, userdata, rc):
-    if rc != 0:
+def on_connect(mqttc, obj, flags, reason_code, properties):
+    if reason_code != 0:
         print("Unable to connect to MQTT Broker...")
     else:
         print("Connected with MQTT Broker: ", str(MQTT_BROKER))
-
-
-def on_publish(client, userdata, mid):
-    pass
-
-
-def on_disconnect(client, userdata, rc):
-    pass
 
 
 # faking
@@ -57,10 +49,8 @@ def publish_fake_data():
     threading.Timer(3.0, publish_fake_data).start()
     publish_now(prepare_data())
 
-mqttc = mqtt.Client()
+mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 mqttc.on_connect = on_connect
-mqttc.on_disconnect = on_disconnect
-mqttc.on_publish = on_publish
 
 try:
     mqttc.connect(MQTT_BROKER, int(MQTT_PORT), int(KEEP_ALIVE_INTERVAL))

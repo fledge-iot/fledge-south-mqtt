@@ -152,7 +152,7 @@ _DEFAULT_CONFIG = {
 def plugin_info():
     return {
         'name': 'MQTT Subscriber',
-        'version': '2.6.0',
+        'version': '3.0.0',
         'mode': 'async',
         'type': 'south',
         'interface': '1.0',
@@ -268,13 +268,16 @@ class MqttSubscriberClient(object):
     def on_connect(self, client, userdata, flags, rc):
         """ The callback for when the client receives a CONNACK response from the server
         """
+        if rc != 0:
+            _LOGGER.warn("Connection with MQTT server failed with result code: %s", self.mqtt_client.connack_string(rc))
+            return
         client.connected_flag = True
         # subscribe at given Topic on connect
         client.subscribe(self.topic, self.qos)
         _LOGGER.info("MQTT connected. Subscribed the topic: %s", self.topic)
 
     def on_disconnect(self, client, userdata, rc):
-        pass
+        _LOGGER.info("Connection with MQTT server closed with result code: %s", str(rc))
 
     def on_message(self, client, userdata, msg):
         """ The callback for when a PUBLISH message is received from the server
@@ -302,7 +305,7 @@ class MqttSubscriberClient(object):
 
         self.mqtt_client.on_disconnect = self.on_disconnect
 
-        self.mqtt_client.connect(self.broker_host, self.broker_port, self.keep_alive_interval)
+        self.mqtt_client.connect_async(self.broker_host, self.broker_port, self.keep_alive_interval)
         _LOGGER.info("MQTT connecting..., Broker Host: %s, Port: %s", self.broker_host, self.broker_port)
 
         self.mqtt_client.loop_start()

@@ -1,2 +1,2 @@
-fledge_south_mqtt-readings_version=3.0.0
-fledge_version>=3.0
+fledge_south_mqtt-readings_version=3.1.0
+fledge_version>=3.1

@@ -52,8 +52,6 @@ import paho.mqtt.client as mqtt
 
 from fledge.common import logger
 from fledge.plugins.common import utils
-from fledge.services.south import exceptions
-from fledge.services.south.ingest import Ingest
 import async_ingest
 
 __author__ = "Praveen Garg, Oskar Gert"
